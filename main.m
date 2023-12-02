@@ -1,0 +1,24 @@
+close all
+clear all
+
+load data
+
+y=data;
+lags=2;
+T0=40;
+T0B=40;
+T0A=[2 3];
+T0H=4;
+kB=.01;
+kA=.1;
+kH=.01;
+M=600;
+N=200;
+
+r=tvsvar(y,lags,T0,T0B,T0A,T0H,kB,kA,kH,M);
+
+int=10; % thinning parameter (choose 1 if want to use all draws for constructing 
+        % the final graphs; choose J if want to use one every J draws for 
+        % constructing the final graphs) 
+   
+NewGraphs;
