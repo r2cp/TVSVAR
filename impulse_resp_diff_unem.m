@@ -31,13 +31,14 @@ for i=2:2
     for j=3:3
         medp=prctile(squeeze(response(1,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-o'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
+        title('(a) Impulse responses of unemployment')
+        
         CILp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',16);
         CIUp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',84);
-        medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',50); 
-        title('(a)')
+        medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',50);
         subplot(2,2,2); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(b)')
+        title('(b) Diff. 1975Q1 and 1981Q3')
         
         medp=prctile(squeeze(response(2,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-+'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
@@ -46,7 +47,7 @@ for i=2:2
         medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,3); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(c)')
+        title('(c) Diff. 1975Q1 and 1996Q1')
         
         medp=prctile(squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-x'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
@@ -56,7 +57,7 @@ for i=2:2
         medp=prctile(squeeze(response(2,i,j,:,:))'-squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,4); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(d)')     
+        title('(d) Diff. 1981Q3 and 1996Q1')     
         
     end
 end

@@ -9,7 +9,7 @@ function impulse_resp_diff(AA,BB,HH,n,lags,M,N,a)
 T=size(BB,1);
 d=size(BB,2);
 [junk k]=size(a);
-a=((a-63.25))*4;
+a=((a-63.25))*4; % Readjustment of dates
 MM=M-N;
 
   
@@ -28,17 +28,18 @@ end
 end
 
 
-for i=1:1
-    for j=3:3
+for i=1:1 % Variable shocked (inflation) 
+    for j=3:3 % Shock variable (interest rate, MP shock) 
         medp=prctile(squeeze(response(1,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-o'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]);
+        title('(a) Impulse responses of inflation')
+        
         CILp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',16);
         CIUp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',84);
         medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',50); 
-        title('(a)')
         subplot(2,2,2); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]);
         plot(CIUp','--r'); plot(medp);
-        title('(b)')
+        title('(b) Diff. 1975Q1 and 1981Q3')
         
         medp=prctile(squeeze(response(2,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-+'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
@@ -47,7 +48,7 @@ for i=1:1
         medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,3); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(c)')
+        title('(c) Diff. 1975Q1 and 1996Q1')
         
         medp=prctile(squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-x'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
@@ -57,9 +58,9 @@ for i=1:1
         medp=prctile(squeeze(response(2,i,j,:,:))'-squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,4); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(d)')       
+        title('(d) Diff. 1981Q3 and 1996Q1')       
         
     end
 end
-res=[];
+% res=[];
 

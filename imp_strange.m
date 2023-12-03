@@ -26,6 +26,7 @@ for i=1:MM
 end
 res.II=II;
 figure
+set(gcf,"Position", [0 0 800 800]);
 for j=1:4
     
     CILp=prctile(squeeze(II(:,j,:))',16);
@@ -56,14 +57,17 @@ for j=1:4
     end
     %end
 end
-subplot(2,2,1); title('(a)');
-subplot(2,2,2); title('(b)');
-subplot(2,2,3); title('(c)');
-subplot(2,2,4); title('(d)');
+subplot(2,2,1); title('(a) Simultaneous response');
+subplot(2,2,2); title('(b) Response after 10 quarters');
+subplot(2,2,3); title('(c) Response after 20 quarters');
+subplot(2,2,4); title('(d) Response after 60 quarters');
+
+% Figure with the median responses
 figure
+set(gcf,"Position", [0 0 800 800]);
 me=median(II(:,:,:),3);
 plot([1963.5:.25:2001.5]',me(:,1),'--'); grid; hold on
 plot([1963.5:.25:2001.5]',me(:,2),':');  hold on
 plot([1963.5:.25:2001.5]',me(:,3),'-.');  hold on
 plot([1963.5:.25:2001.5]',me(:,4));
-legend('response after 0 quarters','response after 10 quarters','response after 20 quarters','response after 60 quarters')
+legend('Response after 0 quarters','Response after 10 quarters','Response after 20 quarters','Response after 60 quarters')
