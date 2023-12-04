@@ -1,4 +1,5 @@
-function res=conterfactual(y,A,B,MA,MB,H,MH,n,lags,M,N,T0,T1,a,nf)
+function res=conterfactual(y,A,B,MA,MB,H,MH,n,lags,M,N,dates,T0,T1,a,nf)
+% nf = scenario number? 
 
 TT0=(T0-63.25)*4;
 TT1=(T1-63.25)*4;
@@ -25,6 +26,7 @@ ycf(1:2,:)=z(TT0-2:TT0-1,:);
 
 for i=1:MM
     for t=TT0:TT1
+
         BB1=[B(t,[2 3 4],i+N);B(t,[9 10 11],i+N);B(t,[16 17 18],i+N)];
         BB2=[B(t,[5 6 7],i+N);B(t,[12 13 14],i+N);B(t,[19 20 21],i+N)];
         CC=(squeeze(B(t,[1 8 15],i+N)))';
@@ -69,7 +71,7 @@ for i=1:MM
             
             
         elseif nf==2
-            % MP
+            % MP rule described 
             %         BBB1=[B(t,[2 3 4],i+N);B(t,[9 10 11],i+N);B(a(1),[16 17 18],i+N)];
             %         BBB2=[B(t,[5 6 7],i+N);B(t,[12 13 14],i+N);B(a(1),[19 20 21],i+N)];
             %         CCC=([squeeze(B(t,[1 8],i+N)) squeeze(B(a(1),[15],i+N))])';
@@ -175,20 +177,25 @@ res.YYYY=median(YY,3);
 % subplot(2,1,1); hist(portion1,20);
 % subplot(2,1,2); hist(portion2,20);
 
+xlabs = ["1970:1", "1975:1","1980:1","1985:1","1990:1","1995:1","2000:1","2005:1","2010:1","2015:1","2019:4"];
 
 CIL=prctile(squeeze(res.YY(:,1,:))',16);
 CIU=prctile(squeeze(res.YY(:,1,:))',84);
 figure
+set(gcf, "Position", [0 0 800 800]);
+
+% Inflation
 subplot(2,1,1);
-plot([T0-.5:.25:T1],z(TT0-2:TT1,1),'LineWidth',2); grid; hold on;
-plot([T0-.5:.25:T1],CIL','--r'); hold on;
+g1=plot([T0-.5:.25:T1],z(TT0-2:TT1,1),'LineWidth',2); grid; hold on;
+g2=plot([T0-.5:.25:T1],CIL','--r'); hold on;
 plot([T0-.5:.25:T1],CIU','--r'); hold on;
-plot([T0-.5:.25:T1],res.YYY(:,1),'k');
-axis([70 88 0 12])
-title('(a)')
+g4=plot([T0-.5:.25:T1],res.YYY(:,1),'k');
+axis([70 120 -0.5 12]) 
+xticklabels(xlabs)
+title('(a) Counterfactual historical simulation of inflation')
+legend([g1 g2 g4],'Actual','Error bands','Counterfactual')
 
-
-
+% Unemployment
 CIL=prctile(squeeze(res.YY(:,2,:))',16);
 CIU=prctile(squeeze(res.YY(:,2,:))',84);
 subplot(2,1,2);
@@ -196,9 +203,9 @@ g1=plot([T0-.5:.25:T1],z(TT0-2:TT1,2),'LineWidth',2); grid; hold on;
 g2=plot([T0-.5:.25:T1],CIL','--r'); hold on;
 g3=plot([T0-.5:.25:T1],CIU','--r'); hold on;
 g4=plot([T0-.5:.25:T1],res.YYY(:,2),'k');
-axis([70 88 0 12])
-title('(b)')
-legend([g1 g2 g4],'actual','error bands','counterfactual')
+axis([70 120 -0.5 12])
+xticklabels(xlabs)
+title('(b) Counterfactual historical simulation of unemployment')
 
 
 % CIL=prctile(squeeze(res.YY(:,3,:))',16);

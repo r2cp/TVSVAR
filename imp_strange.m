@@ -1,5 +1,9 @@
 function res=imp_strange(A,B,n,M,N,k)
-% computes the dinamic response of interest rate to a 1% shock to inflation
+% computes the dynamic response of interest rate to a 1% shock of variable
+% k
+% note: k denotes the variable of the permanent shock: 
+% k=1 -> inflation, k=2 -> unemployment
+
 a=[1 10 20 60];
 MM=M-N;
 T=size(B,1);
@@ -25,8 +29,11 @@ for i=1:MM
     II(:,:,i)=I(:,a);
 end
 res.II=II;
+
 figure
 set(gcf,"Position", [0 0 800 800]);
+dates = 1963.5:.25:2019.75; % 1963Q3 - 2019Q4
+
 for j=1:4
     
     CILp=prctile(squeeze(II(:,j,:))',16);
@@ -46,14 +53,23 @@ for j=1:4
     %         end
     %     else
     subplot(2,2,j);
-    plot([1963.5:.25:2001.5]',[medp']); grid;
+    plot(dates', [medp']); grid;
     hold on
-    plot([1963.5:.25:2001.5]',CILp','--r');
-    plot([1963.5:.25:2001.5]',CIUp','--r');
-    if k==1
-        axis([1962 2002 -1 3.5])
-    else
-        axis([1962 2002 -3 1])
+    plot(dates',CILp','--r');
+    plot(dates',CIUp','--r');
+    if k==1 % For permanent shock of inflation 
+        if j ~= 4
+            % lims for panels (a)-(c)
+            axis([1962 2020.25 -1 3.5])
+        else
+            % lims for panel (d) plot
+            axis([1962 2020.25 -1 4.2])
+        end
+    else % For permanent shock of unemployment
+        axis([1962 2020.25 -3 1])
+        if j == 4 
+            axis([1962 2020.25 -3.5 1])
+        end
     end
     %end
 end
@@ -62,12 +78,17 @@ subplot(2,2,2); title('(b) Response after 10 quarters');
 subplot(2,2,3); title('(c) Response after 20 quarters');
 subplot(2,2,4); title('(d) Response after 60 quarters');
 
-% Figure with the median responses
+% Figure 5: with just the median responses
 figure
 set(gcf,"Position", [0 0 800 800]);
 me=median(II(:,:,:),3);
-plot([1963.5:.25:2001.5]',me(:,1),'--'); grid; hold on
-plot([1963.5:.25:2001.5]',me(:,2),':');  hold on
-plot([1963.5:.25:2001.5]',me(:,3),'-.');  hold on
-plot([1963.5:.25:2001.5]',me(:,4));
+plot(dates',me(:,1),'--'); grid; hold on
+plot(dates',me(:,2),':');  hold on
+plot(dates',me(:,3),'-.');  hold on
+plot(dates',me(:,4));
 legend('Response after 0 quarters','Response after 10 quarters','Response after 20 quarters','Response after 60 quarters')
+if k == 1 % lims for inflation
+    axis([1960 2020 -.2 3.5])
+else % lims for unemployment
+    axis([1960 2020 -2.2 0])
+end

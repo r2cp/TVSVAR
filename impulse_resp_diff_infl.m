@@ -1,18 +1,22 @@
-function impulse_resp_diff(AA,BB,HH,n,lags,M,N,a)
+function impulse_resp_diff(AA,BB,HH,n,lags,M,N,dates,irf_dates)
 % computes the difference between the impulse response in two different dates
 % with 68% CI
-% the dates are specified in the vector a.
+% the dates are in the vector irf_dates and looked up using vector dates.
 % these IR are computed NOT fixing the coefficients of the non-policy block to the 
 % value of the first date (actually a mean over the previous year)
 
 
 T=size(BB,1);
 d=size(BB,2);
+% Find time periods of selected irf_dates
+a = arrayfun(@(d) find(dates==d), irf_dates);
 [junk k]=size(a);
-a=((a-63.25))*4; % Readjustment of dates
 MM=M-N;
 
+% Labels for graphs 
+t_label = arrayfun(@(d) string(d, "yyyy:Q"), irf_dates); 
   
+% Compute IRFs
 H=diag(mean((HH(:,:)),1));
 smat=zeros(3,3);
 B=zeros(3,3,2);
@@ -39,7 +43,7 @@ for i=1:1 % Variable shocked (inflation)
         medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(2,i,j,:,:))',50); 
         subplot(2,2,2); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]);
         plot(CIUp','--r'); plot(medp);
-        title('(b) Diff. 1975Q1 and 1981Q3')
+        title(sprintf('(b) Diff. %s and %s', t_label(1), t_label(2)))
         
         medp=prctile(squeeze(response(2,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-+'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
@@ -48,17 +52,17 @@ for i=1:1 % Variable shocked (inflation)
         medp=prctile(squeeze(response(1,i,j,:,:))'-squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,3); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(c) Diff. 1975Q1 and 1996Q1')
+        title(sprintf('(c) Diff. %s and %s', t_label(1), t_label(3)))
         
         medp=prctile(squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,1); plot(medp,'-x'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; %axis([0 20 -.1 .1]); 
-        legend('1975:I','1981:III','1996:I')
+        legend(t_label{:})
         CILp=prctile(squeeze(response(2,i,j,:,:))'-squeeze(response(3,i,j,:,:))',16);
         CIUp=prctile(squeeze(response(2,i,j,:,:))'-squeeze(response(3,i,j,:,:))',84);
         medp=prctile(squeeze(response(2,i,j,:,:))'-squeeze(response(3,i,j,:,:))',50); 
         subplot(2,2,4); plot(CILp','--r'); grid; ; set(gca,'xtick',[0 5 10 15 20]); hold on; axis([0 20 -.1 .1]); 
         plot(CIUp','--r'); plot(medp);
-        title('(d) Diff. 1981Q3 and 1996Q1')       
+        title(sprintf('(d) Diff. %s and %s', t_label(2), t_label(3)))
         
     end
 end
