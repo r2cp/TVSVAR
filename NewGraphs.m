@@ -74,6 +74,7 @@ impulse_resp_diff_unem(rsmall.A,rsmall.B,rsmall.HH,3,2,rsmall.M,rsmall.N, dates,
 % computes the dinamic response of interest rate to a 1% shock of inflation
 res = imp_strange(rsmall.A,rsmall.B,3,rsmall.M,rsmall.N, 1);
 
+%{
 %% Figures 6 and 7: Interest rate response to a 1% permanent increase of unemployment
 
 % computes the dinamic response of interest rate to a 1% shock of
@@ -102,4 +103,4 @@ res=conterfactual(y((T0 + lags + 1):end, :),rsmall.A,rsmall.B,rsmall.AA,rsmall.B
 ); 
 
 
-
+%}

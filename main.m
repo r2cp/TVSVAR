@@ -11,7 +11,7 @@ y=recentdata;
 lags=2;
 T0=40;      % number of observations in the pre-sample used for the prior calibration
 T0B=40;     % degrees of freedom for the IW prior distribution of var(errB)
-T0A=[2 3];  % vector of length n-1, containing the degrees of freedom for the IW prior distributions of the blocks of S=var(errA)
+T0A=[2 3];  % vector of length n-1, containing the degrees of freedom for the IW prior distributions of the blocks of S =   var(errA)
 T0H=4;      % degrees of freedom for the IW prior distribution of var(errH)
 kB=.01;     % constant scaling the prior of Q = var(errB)
 kA=.1;      % constant scaling the prior of S = var(errA)
@@ -27,7 +27,10 @@ r = tvsvar(y,lags,T0,T0B,T0A,T0H,kB,kA,kH,M);
 % load workspace_data_10000.mat
 
 % Part (b), with data through 2019Q4
-load workspace_recentdata_10000.mat
+% load workspace_recentdata_10000.mat
+
+% Part (c), with data through 2019Q4 - Constant volatilities
+% load workspace_recentdata_constvol_10000.mat
 
 %% Generate graphs
 close all;

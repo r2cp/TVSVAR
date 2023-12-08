@@ -45,6 +45,6 @@ end
 H=zeros(T,n);
 H(T,:)=mvnrnd(shat,sig/2+sig'/2,1);
 for t=T-1:-1:1
-    [btTp,StTp]=kback(SHAT(t,:),squeeze(SIG(t,:,:)),H(t+1,:),1,Vlast);
-    H(t,:)=mvnrnd(btTp,StTp/2+StTp'/2,1);   
+    [btTp,StTp] = kback(SHAT(t,:),squeeze(SIG(t,:,:)),H(t+1,:),1,Vlast);
+    H(t,:) = mvnrnd(btTp,StTp/2+StTp'/2,1);   
 end
