@@ -44,7 +44,7 @@ if (nargin ~= 10); error('Wrong # of arguments'); end
 % putting the VAR in the form Y=ZB+e and adding the constant to the regressors
 x=[];
 for i=1:lags
-    x=[x lag(y,i)];
+    x = [x lag(y,i)];
 end
 x=[ones(length(x),1) x];
 x=x(lags+1:end,:);
@@ -61,15 +61,15 @@ Z=kron(eye(n),x);
 
 % defining the relevant dimensions
 T=T-T0;         % length of estimation sample
-k=n+lags*n^2;   % # of VAR coefficients
-na=n*(n-1)/2;   % # of free coefficients in the matrix A
-ns=k+na+n;      % # of shocks with time-varying variance
+k = n + lags*n^2;   % # of VAR coefficients
+na = n*(n-1)/2;   % # of free coefficients in the matrix A
+ns = k+na+n;      % # of shocks with time-varying variance
 
 % storage matrices
-B=zeros(T,k,M);     
-A=zeros(T,na,M+1);  
-H=zeros(T,n,M+1);
-V=zeros(ns,ns,M+1);
+B=zeros(T,  k,   M);     
+A=zeros(T,  na,  M+1);  
+H=zeros(T,  n,   M+1);
+V=zeros(ns, ns, M+1);
 
 
 % =========================================================================
@@ -83,9 +83,9 @@ VBbar=kron(resB'*resB/length(resB),eye(k/n)/priorB.XX);
 
 % time varying coefficients in A
 auxM=reshape([1:n^2],n,n)'; auxM=tril(auxM,-1); auxV=reshape(auxM,n^2,1); auxV(auxV==0)=[]; auxV=auxV';
-ZZ0=kron(eye(n),resB); ZZ0=ZZ0(:,auxV);
-priorA=ols1(reshape(resB,n*T0,1),ZZ0);
-resA=reshape(priorA.resols,T0,n);
+ZZ0 = kron(eye(n),resB); ZZ0=ZZ0(:,auxV);
+priorA = ols1(reshape(resB, n*T0, 1), ZZ0);
+resA = reshape(priorA.resols, T0, n);
 Abar=priorA.bhatols';
 VAbarhat=(ZZ0'*ZZ0)\ZZ0'*(kron((resA'*resA/length(resA)),eye(T0)))*ZZ0/(ZZ0'*ZZ0);
 VAbar=zeros(na);
@@ -96,8 +96,8 @@ for j=1:n-1
 end
 
 % time varying coefficients in H
-Rbar=(diag(resA'*resA/length(resA)));
-Hbar=log(Rbar)/2;
+Rbar = (diag(resA'*resA / length(resA)));
+Hbar = log(Rbar)/2;
 
 % auxiliary vector to be used below
 auxMnew=reshape([1:(n-1)^2],n-1,n-1)'; auxMnew=tril(auxMnew); 
@@ -105,7 +105,8 @@ auxVnew=reshape(auxMnew',(n-1)^2,1); auxVnew(auxVnew==0)=[]; auxVnew=auxVnew';
 
 
 % =========================================================================
-% INIZIALIZATION OF THE ALGORITHM
+% INITIALIZATION OF THE ALGORITHM
+
 % Drawing the initial V from the prior
 V0B=VBbar*T0B*kB^2;
 V(1:k,1:k,1)=iwishrnd(V0B,T0B);
@@ -115,13 +116,22 @@ for j=1:n-1
     V(k+count:k+count+j-1,k+count:k+count+j-1,1)=iwishrnd(V0A,T0A(j));
     count=count+j;
 end
-V0H=eye(n)*T0H*kH^2;
-V(k+na+1:end,k+na+1:end,1)=iwishrnd(V0H,T0H);
 
-% drawing the initial H from the prior
-H(1,:,1)=mvnrnd(Hbar,eye(n),1);
+% Drawing the initial W = Var(errH)
+V0H = eye(n)*T0H*kH^2;
+V(k+na+1:end, k+na+1:end, 1) = iwishrnd(V0H,T0H);
+
+% Volatilities constant through time 
+V(k+na+1:end, k+na+1:end, 1) = zeros(n, n);
+
+% Drawing the initial H
+H(1,:,1) = mvnrnd(Hbar, eye(n), 1);
 for t=2:T
-    H(t,:,1)=mvnrnd(H(t-1,:,1),V(k+na+1:end,k+na+1:end,1),1);
+    % Normal distribution with mean H(t-1,:,1) and variance V(k+na+1:end,k+na+1:end,1)
+    % H(t,:,1) = mvnrnd(H(t-1,:,1), V(k+na+1:end,k+na+1:end,1), 1);
+
+    % Volatilities constant through time
+    H(t, :, 1) = H(t-1, :, 1); 
 end
 
 % drawing the initial A from the prior
@@ -166,8 +176,8 @@ for i=1:M
     % =====================================================================
     % STEP 2: DRAWS OF A
 
-    Yhat=(Y-sum((Z.*repmat(squeeze(B(:,:,i)),n,1))')');
-    yhat=reshape(Yhat,T,n);
+    Yhat = (Y-sum((Z.*repmat(squeeze(B(:,:,i)),n,1))')');
+    yhat = reshape(Yhat,T,n);
     
     % Kalman filter
     SHAT=zeros(T,na);
@@ -184,23 +194,28 @@ for i=1:M
     end
 
     % simulation smoother
-    A(T,:,i+1)=mvnrnd(shat,sig/2+sig'/2,1);
+    A(T,:,i+1) = mvnrnd(shat,sig/2+sig'/2,1);
     for t=T-1:-1:1
-        [btTp,StTp]=kback(SHAT(t,:),squeeze(SIG(t,:,:)),squeeze(A(t+1,:,i+1)),eye(na),squeeze(V(k+1:k+na,k+1:k+na,i)));
-        A(t,:,i+1)=mvnrnd(btTp,StTp/2+StTp'/2,1);
+        [btTp,StTp] = kback(SHAT(t,:),squeeze(SIG(t,:,:)),squeeze(A(t+1,:,i+1)),eye(na),squeeze(V(k+1:k+na,k+1:k+na,i)));
+        A(t,:,i+1) = mvnrnd(btTp,StTp/2+StTp'/2,1);
     end
 
     
     % =====================================================================
     % STEP 3: DRAWS OF the indicator variables s and H
-    ystar=zeros(T,n);
+    ystar = zeros(T,n);
     for t=1:T
-        ystar(t,:)=(tria(A(t,:,i+1))*yhat(t,:)')';
+        ystar(t,:) = (tria(A(t,:,i+1)) * yhat(t,:)')';
     end
   
-    [H(:,:,i+1)]=step_sv(ystar,squeeze(V(k+na+1:end,k+na+1:end,i)),Hbar,squeeze(H(:,:,i)));
-    % [H(:,:,i+1)]=step_sv_mcmc(ystar,squeeze(V(k+na+1:end,k+na+1:end,i)),Hbar,squeeze(H(:,:,i))); % use this line instead of the previous one to implement the exact algorithm (algorithm 3)    
+    % Sigma matrix is obtained for all periods
+    % [H(:,:,i+1)] = step_sv(ystar, squeeze(V(k+na+1:end,k+na+1:end,i)), Hbar, squeeze(H(:,:,i)));
+    % [H(:,:,i+1)] = step_sv_mcmc(ystar,squeeze(V(k+na+1:end,k+na+1:end,i)), Hbar, squeeze(H(:,:,i))); % use this line instead of the previous one to implement the exact algorithm (algorithm 3)    
     
+    % Diagonal entries of Sigma matrix are constant under W = var(errH) = 0 (nxn)
+    % W = V(k+na+1:end, k+na+1:end, i)
+    Haux = step_sv(ystar, squeeze(V(k+na+1:end, k+na+1:end, i)), Hbar, squeeze(H(:,:,i)));
+    H(:,:,i+1) = Haux;
     
     % =====================================================================
     % STEP 4: DRAWS OF V
@@ -213,16 +228,20 @@ for i=1:M
     % Drawing var(errA)
     count=1;
     for j=1:n-1
-        errA=A(2:end,count:count+j-1,i+1)-A(1:end-1,count:count+j-1,i+1);
-        V1A=errA'*errA+T0A(j)*VAbar(count:count+j-1,count:count+j-1)*kA^2;
-        V(k+count:k+count+j-1,k+count:k+count+j-1,i+1)=iwishrnd(V1A,T-1+T0A(j));
-        count=count+j;
+        errA = A(2:end, count:count+j-1, i+1) - A(1:end-1, count:count+j-1, i+1);
+        V1A = errA' * errA + T0A(j) * VAbar(count:count+j-1,count:count+j-1) * kA^2;
+        % Fill S = Var(A)
+        V(k+count:k+count+j-1, k+count:k+count+j-1, i+1) = iwishrnd(V1A, T-1+T0A(j));
+        count = count+j;
     end
     
     % Drawing var(errH)
-    errH=H(2:end,:,i+1)-H(1:end-1,:,i+1);
-    V1H=errH'*errH+(kH^2)*eye(n)*T0H;
-    V(k+na+1:end,k+na+1:end,i+1)=iwishrnd(V1H,T-1+T0H); 
+    % errH = H(2:end,:,i+1) - H(1:end-1,:,i+1);
+    % V1H = errH' * errH + (kH^2) * eye(n) * T0H;
+    % V(k+na+1:end, k+na+1:end, i+1) = iwishrnd(V1H, T-1+T0H);
+
+    % Removing the process of noise W from V 
+    V(k+na+1:end, k+na+1:end, i+1) = zeros(n, n); 
 
 end
 
