@@ -73,10 +73,11 @@ impulse_resp_diff_unem(rsmall.A,rsmall.B,rsmall.HH,3,2,rsmall.M,rsmall.N,a);
 res = imp_strange(rsmall.A,rsmall.B,3,rsmall.M,rsmall.N,1);
 axis([1960 2005 -.2 2.5])
 
+%{
 %% Other figures... 
 res=imp_strange(rsmall.A,rsmall.B,3,rsmall.M,rsmall.N,2);
 axis([1960 2005 -2 0])
 
 res=conterfactual(y(43:end,:),rsmall.A,rsmall.B,rsmall.AA,rsmall.BB,rsmall.H,rsmall.HH,3,2,rsmall.M,rsmall.N,70,87,92.75,2);
 
-
+%}

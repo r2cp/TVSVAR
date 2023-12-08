@@ -17,14 +17,14 @@ kH=.01;     % constant scaling the prior of W = var(errH)
 M=10000;      % total number of draws in the Gibbs sampling algorithm
 
 % Run the Time-Varying SVAR MCMC estimation
-% r = tvsvar(y,lags,T0,T0B,T0A,T0H,kB,kA,kH,M);
+r = tvsvar(y,lags,T0,T0B,T0A,T0H,kB,kA,kH,M);
 
 %% Graphs
 close all;
-load workspace_data_10000.mat
+% load workspace_data_10000.mat
 
 int=1;     % thinning parameter (choose 1 if want to use all draws for constructing 
             % the final graphs; choose J if want to use one every J draws for 
             % constructing the final graphs) 
-N=200;
+N=2000;
 NewGraphs;

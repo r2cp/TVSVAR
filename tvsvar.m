@@ -117,9 +117,10 @@ for j=1:n-1
     count=count+j;
 end
 
-% Drawing the initial W = Var(errH)
-V0H = eye(n)*T0H*kH^2;
-V(k+na+1:end, k+na+1:end, 1) = iwishrnd(V0H,T0H);
+% % For constant volatilities
+% % Drawing the initial W = Var(errH)
+% V0H = eye(n)*T0H*kH^2;
+% V(k+na+1:end, k+na+1:end, 1) = iwishrnd(V0H,T0H);
 
 % Volatilities constant through time 
 V(k+na+1:end, k+na+1:end, 1) = zeros(n, n);
